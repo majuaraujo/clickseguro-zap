@@ -4,17 +4,16 @@ on:
   push:
     branches:
       - main
-  pull_request:
 
 jobs:
   zap_scan:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Baixar código do repositório
+      - name: Baixar código
         uses: actions/checkout@v4
 
-      - name: Iniciar aplicação local
+      - name: Iniciar aplicação
         run: |
           python3 -m http.server 8080 &
           sleep 10
@@ -24,18 +23,5 @@ jobs:
         with:
           target: "http://localhost:8080"
           fail_action: true
-          cmd_options: "-a -r zap-report.html -J zap-report.json -w zap-report.md"
-
-      - name: Listar arquivos gerados
-        if: always()
-        run: ls -la
-
-      - name: Salvar relatório como artefato
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: zap-report
-          path: |
-            zap-report.html
-            zap-report.json
-            zap-report.md
+          artifact_name: "zap-report"
+          allow_issue_writing: false
