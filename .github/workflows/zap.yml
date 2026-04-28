@@ -4,38 +4,33 @@ on:
   push:
     branches:
       - main
-  pull_request:
 
 jobs:
   zap_scan:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Baixar código do repositório
+      - name: Checkout do código
         uses: actions/checkout@v4
 
-      - name: Iniciar aplicação local
+      - name: Subir servidor local
         run: |
-          python3 -m http.server 8080 > server.log 2>&1 &
-          sleep 5
+          python3 -m http.server 8080 &
+          sleep 10
 
-      - name: Criar pasta do relatório
-        run: mkdir -p zap-report
+      - name: Rodar ZAP (SEM docker manual)
+        uses: zaproxy/action-baseline@v0.12.0
+        with:
+          target: "http://127.0.0.1:8080"
+          rules_file_name: ".zap/rules.tsv"
+          cmd_options: "-r zap_report.html -w zap_report.md -J zap_report.json"
 
-      - name: Rodar OWASP ZAP
-        run: |
-          docker run --rm --network host \
-            -v ${{ github.workspace }}/zap-report:/zap/wrk/:rw \
-            ghcr.io/zaproxy/zaproxy:stable \
-            zap-baseline.py \
-            -t http://127.0.0.1:8080 \
-            -r zap_report.html \
-            -J zap_report.json \
-            -w zap_report.md || true
-
-      - name: Publicar relatório como Artifact
+      - name: Upload do relatório
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: zap-security-report
-          path: zap-report
+          name: zap-report
+          path: |
+            zap_report.html
+            zap_report.md
+            zap_report.json
