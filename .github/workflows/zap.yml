@@ -24,11 +24,15 @@ jobs:
         with:
           target: "http://127.0.0.1:8080"
           fail_action: false
-          cmd_options: "-r zap_report.html -w zap_report.md -J zap_report.json"
+          artifact_name: zap-report
+          cmd_options: "-a -r zap_report.html -w zap_report.md -J zap_report.json"
 
-      - name: Listar arquivos gerados
+      - name: Verificar arquivos gerados
         if: always()
-        run: ls -la
+        run: |
+          echo "Arquivos encontrados:"
+          find . -name "zap_report*" -type f
+          ls -la
 
       - name: Salvar relatório como Artifact
         uses: actions/upload-artifact@v4
@@ -36,6 +40,6 @@ jobs:
         with:
           name: zap-report
           path: |
-            zap_report.html
-            zap_report.md
-            zap_report.json
+            **/zap_report.html
+            **/zap_report.md
+            **/zap_report.json
