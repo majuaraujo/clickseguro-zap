@@ -24,6 +24,11 @@ jobs:
         with:
           target: "http://localhost:8080"
           fail_action: true
+          cmd_options: "-a -r zap-report.html -J zap-report.json -w zap-report.md"
+
+      - name: Listar arquivos gerados
+        if: always()
+        run: ls -la
 
       - name: Salvar relatório como artefato
         if: always()
@@ -31,6 +36,6 @@ jobs:
         with:
           name: zap-report
           path: |
-            report_html.html
-            report_json.json
-            report_md.md
+            zap-report.html
+            zap-report.json
+            zap-report.md
