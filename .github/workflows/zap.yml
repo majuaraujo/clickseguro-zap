@@ -24,4 +24,13 @@ jobs:
         with:
           target: "http://localhost:8080"
           fail_action: true
-          artifact_name: "zap-report"
+
+      - name: Salvar relatório como artefato
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: zap-report
+          path: |
+            report_html.html
+            report_json.json
+            report_md.md
