@@ -6,10 +6,10 @@
   </head>
   <body>
     <h1>ClickSeguro</h1>
-
     <h2>Login</h2>
 
-    <form>
+    <!-- Vulnerabilidade proposital: formulário sem validação de entrada -->
+    <form action="/login" method="GET">
       <label>Usuário:</label>
       <input type="text" name="usuario" />
 
@@ -22,5 +22,11 @@
 
       <button type="submit">Entrar</button>
     </form>
+
+    <!-- Vulnerabilidade proposital: uso de script inline -->
+    <script>
+      const params = new URLSearchParams(window.location.search);
+      document.write("Usuário informado: " + params.get("usuario"));
+    </script>
   </body>
 </html>
