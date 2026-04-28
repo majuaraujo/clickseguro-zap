@@ -49,3 +49,14 @@ jobs:
         with:
           name: zap-report
           path: zap-report/
+
+      # (FALHA DO PIPELINE)
+      - name: Falhar pipeline se houver vulnerabilidades
+        run: |
+          echo "Verificando alertas no relatório..."
+          if grep -E "Medium|High|Critical" zap-report/zap_report.html; then
+            echo "Vulnerabilidades encontradas! Falhando pipeline..."
+            exit 1
+          else
+            echo "Nenhuma vulnerabilidade crítica encontrada."
+          fi
